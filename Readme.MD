@@ -1,0 +1,1 @@
+Simple program to recursively search txt files in directories for a specified string.  A search term must be specified.  A custom directory can be specified using the -l flag.
