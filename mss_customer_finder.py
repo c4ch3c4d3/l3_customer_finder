@@ -8,18 +8,21 @@ from argparse import ArgumentParser
 
 def main():
 
+    LOCATION_CLOUD = '/app/mss/configs/core/public/flat'
+    LOCATION_PREMISE = '/app/mss/configs/cpe/public/flat'
     term, location = cli()
 
     #Default locations based on where they are in mssbastion
     if location is None:
-        location = {'cloud': '/app/mss/configs/core/public',
-                    'premise': '/app/mss/configs/cpe/public'}
+        #for a given location, list out each file recursively
+        files = [path.relpath(path.join(dirpath, file), LOCATION_CLOUD) for (
+            dirpath, dirnames, filenames) in walk(location) for file in filenames]
+        files_2 = [path.relpath(path.join(dirpath, file), LOCATION_CLOUD) for (
+            dirpath, dirnames, filenames) in walk(location) for file in filenames]
+        files.append(files_2)
     else:
-        location = location
-
-    #for a given location, list out each file recursively
-    files = [path.relpath(path.join(dirpath, file), location) for (
-        dirpath, dirnames, filenames) in walk(location) for file in filenames]
+        files = [path.relpath(path.join(dirpath, file), location) for (
+            dirpath, dirnames, filenames) in walk(location) for file in filenames]
 
     found_a_result = False
     for i in files:
@@ -61,10 +64,10 @@ def file_parser(file_in, term):
     # Transform the text in various ways to try and suss out the correct format
     result_untransformed = term in contents
     if result_untransformed is False:
-        result_lower = term.lower() in contents
-        if result_lower is False:
-            result_upper = term.upper() in contents
-            if result_upper is False:
+        result_upper = term.upper() in contents
+        if result_upper is False:
+            result_lower = term.lower() in contents
+            if result_lower is False:
                 result_title = term.title() in contents
                 if result_title is False:
                     term = term.upper()
@@ -75,9 +78,9 @@ def file_parser(file_in, term):
                 else:
                     return result_title
             else:
-                return result_upper
+                return result_lower
         else:
-            return result_lower
+            return result_upper
     else:
         return result_untransformed
 
