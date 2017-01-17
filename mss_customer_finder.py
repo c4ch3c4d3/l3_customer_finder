@@ -6,13 +6,17 @@ from argparse import ArgumentParser
 
 def main():
 
+    # ATTENTION: Change these constants if backup locations change
+    # Default locations based on where they are in mssbastion
     LOCATION_CLOUD = '/app/mss/configs/core/public/flat'
     LOCATION_PREMISE = '/app/mss/configs/cpe/public/flat'
+
+    found_a_result = False
     term, location = cli()
 
-    #Default locations based on where they are in mssbastion
+
     if location is None:
-        #for a given location, list out each file recursively
+        #Finds all files for a given location
         files_1 = [path.relpath(path.join(dirpath, file), LOCATION_CLOUD) for (
             dirpath, dirnames, filenames) in walk(LOCATION_CLOUD) for file in filenames]
         files_2 = [path.relpath(path.join(dirpath, file), LOCATION_PREMISE) for (
@@ -22,21 +26,24 @@ def main():
         files = [path.relpath(path.join(dirpath, file), location) for (
             dirpath, dirnames, filenames) in walk(location) for file in filenames]
 
-    found_a_result = False
+    # for each file, set its absolute path
     for i in files:
         if location is None:
-            try:
-                current_file = LOCATION_CLOUD + "/" + i
-            except IOError:
+            if 'gm' in i:
+                current_file = LOCATION_PREMISE + "/" + i
+            else:
                 current_file = LOCATION_PREMISE + "/" + i
         else:
             current_file = location + "/" + i
+
+        # Check if the current file has the users string
         result, line = file_parser(current_file, term)
         if result is True:
             found_a_result = True
             print("Found customer backup in " + current_file)
             print(line + '\n')
 
+    # Error message for if no file has the users string
     if found_a_result is False:
         print("Customer not found.  Try a different search term.  Tip: Try to limit searches to one word")
 
