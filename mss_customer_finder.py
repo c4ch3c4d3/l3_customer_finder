@@ -35,7 +35,7 @@ def main():
         if result is True:
             found_a_result = True
             print("Found customer backup in " + current_file)
-            print(line)
+            print(line + '\n')
 
     if found_a_result is False:
         print("Customer not found.  Try a different search term.  Tip: Try to limit searches to one word")
@@ -66,7 +66,7 @@ def file_parser(file_in, term):
         with open(file_in, 'r') as input_file:
             contents = input_file.readlines()
     except IOError:
-        return
+        return False, None
 
     # Check a provided term.
     # Transform the text in various ways to try and suss out the correct format
@@ -83,15 +83,15 @@ def file_parser(file_in, term):
                         term = term.replace(" ", "_")
                         result_no_space = term in line
                         if result_no_space is True:
-                            return result_no_space, line
+                            return result_no_space, line.split('\"')[1]
                     elif 'comments' in line:
-                        return result_title, line
+                        return result_title, line.split('\"')[1]
                 elif 'comments' in line:
-                    return result_lower, line
+                    return result_lower, line.split('\"')[1]
             elif 'comments' in line:
-                return result_upper, line
+                return result_upper, line.split('\"')[1]
         elif 'comments' in line:
-            return result_untransformed, line
+            return result_untransformed, line.split('\"')[1]
 
     return False, None
 
