@@ -1,8 +1,6 @@
 #!/bin/python3
 # Customer Finder
-
 from os import path, walk
-from ipaddress import IPv4Network
 from argparse import ArgumentParser
 
 
@@ -16,9 +14,9 @@ def main():
     if location is None:
         #for a given location, list out each file recursively
         files = [path.relpath(path.join(dirpath, file), LOCATION_CLOUD) for (
-            dirpath, dirnames, filenames) in walk(location) for file in filenames]
-        files_2 = [path.relpath(path.join(dirpath, file), LOCATION_CLOUD) for (
-            dirpath, dirnames, filenames) in walk(location) for file in filenames]
+            dirpath, dirnames, filenames) in walk(LOCATION_CLOUD) for file in filenames]
+        files_2 = [path.relpath(path.join(dirpath, file), LOCATION_PREMISE) for (
+            dirpath, dirnames, filenames) in walk(LOCATION_PREMISE) for file in filenames]
         files.append(files_2)
     else:
         files = [path.relpath(path.join(dirpath, file), location) for (
@@ -26,7 +24,10 @@ def main():
 
     found_a_result = False
     for i in files:
-        current_file = location + "/" + i
+        if location is None:
+            current_file = location + "/" + i
+        else:
+            current_file = i
         result = file_parser(current_file, term)
         if result is True:
             found_a_result = True
