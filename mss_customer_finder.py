@@ -32,7 +32,7 @@ def main():
             if 'gm' in i:
                 current_file = LOCATION_PREMISE + "/" + i
             else:
-                current_file = LOCATION_PREMISE + "/" + i
+                current_file = LOCATION_CLOUD + "/" + i
         else:
             current_file = location + "/" + i
 
