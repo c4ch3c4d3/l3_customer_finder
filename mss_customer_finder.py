@@ -31,10 +31,11 @@ def main():
                 current_file = LOCATION_PREMISE + "/" + i
         else:
             current_file = location + "/" + i
-        result = file_parser(current_file, term)
+        result, line = file_parser(current_file, term)
         if result is True:
             found_a_result = True
             print("Found customer backup in " + current_file)
+            print(line)
 
     if found_a_result is False:
         print("Customer not found.  Try a different search term.  Tip: Try to limit searches to one word")
@@ -82,17 +83,17 @@ def file_parser(file_in, term):
                         term = term.replace(" ", "_")
                         result_no_space = term in line
                         if result_no_space is True:
-                            return result_no_space
+                            return result_no_space, line
                     elif 'comments' in line:
-                        return result_title
+                        return result_title, line
                 elif 'comments' in line:
-                    return result_lower
+                    return result_lower, line
             elif 'comments' in line:
-                return result_upper
+                return result_upper, line
         elif 'comments' in line:
-            return result_untransformed
+            return result_untransformed, line
 
-    return False
+    return False, None
 
 if __name__ == '__main__':
     main()
