@@ -65,7 +65,7 @@ def file_parser(file_in, term):
         with open(file_in, 'r') as input_file:
             contents = input_file.readlines()
     except IOError:
-        pass
+        return
 
     # Check a provided term.
     # Transform the text in various ways to try and suss out the correct format
