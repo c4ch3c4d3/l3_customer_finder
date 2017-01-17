@@ -63,33 +63,34 @@ def file_parser(file_in, term):
 
     try:
         with open(file_in, 'r') as input_file:
-            contents = input_file.read()
+            contents = input_file.readlines()
     except IOError:
         pass
 
     # Check a provided term.
     # Transform the text in various ways to try and suss out the correct format
-    result_untransformed = term in contents
-    if result_untransformed is False:
-        result_upper = term.upper() in contents
-        if result_upper is False:
-            result_lower = term.lower() in contents
-            if result_lower is False:
-                result_title = term.title() in contents
-                if result_title is False:
-                    term = term.upper()
-                    term = term.replace(" ", "_")
-                    result_no_space = term in contents
-                    if result_no_space is True:
-                        return result_no_space
-                else:
-                    return result_title
-            else:
-                return result_lower
-        else:
-            return result_upper
-    else:
-        return result_untransformed
+    for line in contents:
+        result_untransformed = term in line
+        if result_untransformed is False:
+            result_upper = term.upper() in line
+            if result_upper is False:
+                result_lower = term.lower() in line
+                if result_lower is False:
+                    result_title = term.title() in line
+                    if result_title is False:
+                        term = term.upper()
+                        term = term.replace(" ", "_")
+                        result_no_space = term in line
+                        if result_no_space is True:
+                            return result_no_space
+                    elif 'comments' in line:
+                        return result_title
+                elif 'comments' in line:
+                    return result_lower
+            elif 'comments' in line:
+                return result_upper
+        elif 'comments' in line:
+            return result_untransformed
 
     return False
 
